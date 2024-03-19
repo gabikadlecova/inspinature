@@ -1,4 +1,4 @@
-import click
+import argparse
 import random
 
 from deap import base
@@ -52,31 +52,31 @@ def setup_stats():
     
     return s, hof
 
-
-@click.command()
-@click.argument("pop_size", default=100)
-@click.option("--cxpb", default=0.8)
-@click.option("--verbose/--no_verbose", default=False)
-@click.option("--out_path", default=None)
-def main(pop_size, cxpb, verbose, out_path):
-    settings = {'pop_size': pop_size, 'cxpb': cxpb}
-
+    
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("pop_size", type=int, default=100)
+    parser.add_argument("--cxpb", type=float, default=0.8)
+    parser.add_argument("--_verbose", action="store_true")
+    parser.add_argument("--_out_path", default=None)
+    
+    args = parser.parse_args()
+    
     toolbox = setup_algo()
     s, hof = setup_stats()
     
-    pop = toolbox.population(pop_size)
-    pop, log = algorithms.eaMuPlusLambda(pop, toolbox, mu=100, lambda_=100, cxpb=cxpb, mutpb=0.2, ngen=500, stats=s, halloffame=hof, 
-                                         verbose=verbose)
+    pop = toolbox.population(args.pop_size)
+    pop, log = algorithms.eaMuPlusLambda(pop, toolbox, mu=100, lambda_=100, cxpb=args.cxpb, mutpb=0.2, ngen=500, stats=s, halloffame=hof, 
+                                         verbose=args._verbose)
 
     print(hof, hof[0].fitness.values[0])
     
-    if out_path is not None:
+    if args._out_path is not None:
         # You can check this, sometimes you want to warn instead
         # You can also ask via input() whether you want to overwrite it (not good if running batch jobs)
-        assert not os.path.exists(out_path), "Output path exists!"
-        with open(out_path, 'w') as f:
+        assert not os.path.exists(args._out_path), "Output path exists!"
+        with open(args._out_path, 'w') as f:
+            # skip args that start with _
+            settings = {k: v for k, v in dict(args).items() if not k.startswith('_')}
+            
             json.dump({**settings, 'result': hof[0].fitness.values[0]}, f)
-
-    
-if __name__ == "__main__":
-    main()
