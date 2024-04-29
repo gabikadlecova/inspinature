@@ -1,0 +1,8 @@
+module ava pip
+module avail py-pip/
+module load ...  # copy paste newer pip version
+
+pip install --user click
+
+python qsub_runner.py example.sh --print_command
+
