@@ -6,3 +6,5 @@ pip install --user click
 
 python qsub_runner.py example.sh --print_command
 
+# code at https://github.com/gabikadlecova/pbs-tools
+
