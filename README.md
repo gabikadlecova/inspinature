@@ -1,2 +1,2 @@
 # inspinature
-Code for practicals - Nature inspired algorithms (TBD)
+Code for practicals - Nature inspired algorithms
